@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign In – Shristi</title>
+  <meta name="description" content="Sign in or create your Shristi account to book artists and commission custom artwork."/>
+
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="{% static 'style.css' %}"/>
+
+  <!-- Extra styles specific to the login page split-screen layout -->
+  <style>
+    /* Full-page split: left decorative panel + right form panel */
+    .login-wrapper {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Left decorative half – hidden on mobile */
+    .login-left {
+      flex: 0 0 45%;
+      position: relative;
+      overflow: hidden;
+      display: none;       /* hidden on mobile, shown ≥ lg */
+    }
+    @media (min-width: 992px) { .login-left { display: block; } }
+
+    .login-left img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      filter: brightness(0.5);
+    }
+
+    /* Overlay text on the left image */
+    .login-left-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, rgba(17,17,20,0.6), rgba(17,17,20,0.1));
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 3rem;
+    }
+    .login-left-quote {
+      font-family: var(--font-display);
+      font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 1rem;
+      max-width: 380px;
+    }
+    .login-left-quote span { color: var(--brand-red); }
+
+    .login-left-sub {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    /* Feature bullets on the left panel */
+    .login-features { margin-top: 2rem; }
+    .login-feat-item {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      margin-bottom: 0.75rem;
+      font-size: 0.83rem;
+      color: var(--text-muted);
+    }
+    .login-feat-item i {
+      color: var(--brand-red);
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    /* Right form half */
+    .login-right {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1.5rem;
+      background: var(--bg-dark);
+      position: relative;
+    }
+    /* Subtle glow behind the card */
+    .login-right::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 60% 30%, rgba(230,57,70,0.10) 0%, transparent 55%);
+      pointer-events: none;
+    }
+
+    /* The white card box */
+    .auth-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Hide both forms by default; JavaScript shows the active tab */
+    .auth-form { display: none; }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     SPLIT-SCREEN LAYOUT
+============================================================ -->
+<div class="login-wrapper">
+
+  <!-- LEFT: Decorative art panel (desktop only) -->
+  <div class="login-left">
+    <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=900&q=80"
+         alt="Artistic background"/>
+    <div class="login-left-overlay">
+      <div class="login-left-quote">
+        Where <span>Art</span> Meets<br/>Its Audience.
+      </div>
+      <p class="login-left-sub">Join thousands of art lovers and talented creators on Shristi.</p>
+
+      <div class="login-features">
+        <div class="login-feat-item">
+          <i class="bi bi-shield-check-fill"></i>
+          <span>Secure escrow payments – pay only when you approve</span>
+        </div>
+        <div class="login-feat-item">
+          <i class="bi bi-geo-alt-fill"></i>
+          <span>Filter artists by city, style, and budget</span>
+        </div>
+        <div class="login-feat-item">
+          <i class="bi bi-star-fill"></i>
+          <span>2,000+ verified artists across India</span>
+        </div>
+        <div class="login-feat-item">
+          <i class="bi bi-chat-dots-fill"></i>
+          <span>Chat directly with artists before booking</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Auth form panel -->
+  <div class="login-right">
+    <div class="auth-card">
+
+      <!-- Logo -->
+      <div class="login-logo" style="font-family:var(--font-display); font-size:1.8rem; font-weight:700; letter-spacing:2px; text-align:center; margin-bottom:0.4rem;">
+        Shri<span style="color:var(--brand-red);">sti</span>
+      </div>
+      <p style="text-align:center; font-size:0.85rem; color:var(--text-muted); margin-bottom:1.8rem;">
+        Your gateway to custom artwork
+      </p>
+
+      <!-- LOGIN / REGISTER TABS -->
+      <div class="auth-tabs">
+        <div class="auth-tab" data-tab="login">Sign In</div>
+        <div class="auth-tab active" data-tab="register">Register</div>
+      </div>
+
+
+      <!-- ===== LOGIN FORM ===== -->
+      <form id="loginForm" class="auth-form" style="display:none;" novalidate>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label class="form-label" for="loginEmail">Email Address</label>
+          <input id="loginEmail"
+                 type="email"
+                 class="form-input"
+                 placeholder="you@example.com"
+                 autocomplete="email"
+                 required/>
+          <div id="loginEmailError" class="field-error"></div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label class="form-label" for="loginPassword">Password</label>
+          <div class="input-wrap">
+            <input id="loginPassword"
+                   type="password"
+                   class="form-input"
+                   placeholder="Enter your password"
+                   autocomplete="current-password"
+                   required/>
+            <!-- Toggle visibility – handled by JS -->
+            <i class="bi bi-eye input-icon toggle-password" title="Show/hide password"></i>
+          </div>
+          <div id="loginPasswordError" class="field-error"></div>
+        </div>
+
+        <!-- Forgot password link -->
+        <div style="text-align:right; margin-bottom:0.8rem; margin-top:-0.5rem;">
+          <a href="{% url 'forgot_password' %}" style="font-size:0.78rem; color:var(--brand-red);">Forgot password?</a>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">I am signing in as</label>
+          <div class="d-flex gap-3">
+            <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.85rem; cursor:pointer; color:var(--text-muted);">
+              <input type="radio" name="loginAccountType" value="client" checked style="accent-color:var(--brand-red);"/>
+              Art Lover
+            </label>
+            <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.85rem; cursor:pointer; color:var(--text-muted);">
+              <input type="radio" name="loginAccountType" value="artist" style="accent-color:var(--brand-red);"/>
+              Artist
+            </label>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="btn-auth">Sign In</button>
+
+        <!-- OR divider -->
+        <div class="or-divider">or continue with</div>
+
+        <!-- Google sign-in (UI only – wire up OAuth as needed) -->
+        <button type="button" class="btn-google">
+          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          Continue with Google
+        </button>
+
+        <div class="auth-footer">
+          Don't have an account?
+          <button type="button" class="auth-link-btn" onclick="document.querySelector('[data-tab=register]').click();">Register here</button>
+        </div>
+
+      </form>
+
+
+      <!-- ===== REGISTER FORM ===== -->
+      <form id="registerForm" class="auth-form" style="display:block;" novalidate>
+
+        <!-- Full name -->
+        <div class="form-group">
+          <label class="form-label" for="regName">Full Name</label>
+          <input id="regName"
+                 type="text"
+                 class="form-input"
+                 placeholder="Your full name"
+                 autocomplete="name"
+                 required/>
+          <div id="regNameError" class="field-error"></div>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label class="form-label" for="regEmail">Email Address</label>
+          <input id="regEmail"
+                 type="email"
+                 class="form-input"
+                 placeholder="you@example.com"
+                 autocomplete="email"
+                 required/>
+          <div id="regEmailError" class="field-error"></div>
+        </div>
+
+        <!-- Account type toggle -->
+        <div class="form-group">
+          <label class="form-label">I am registering as</label>
+          <div class="d-flex gap-3">
+            <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.85rem; cursor:pointer; color:var(--text-muted);">
+              <input type="radio" name="accountType" value="client" checked style="accent-color:var(--brand-red);"/>
+              Art Lover (Client)
+            </label>
+            <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.85rem; cursor:pointer; color:var(--text-muted);">
+              <input type="radio" name="accountType" value="artist" style="accent-color:var(--brand-red);"/>
+              Artist
+            </label>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label class="form-label" for="regPassword">Password</label>
+          <div class="input-wrap">
+            <input id="regPassword"
+                   type="password"
+                   class="form-input"
+                   placeholder="Min. 6 characters"
+                   autocomplete="new-password"
+                   required/>
+            <i class="bi bi-eye input-icon toggle-password" title="Show/hide password"></i>
+          </div>
+          <div id="regPasswordError" class="field-error"></div>
+        </div>
+
+        <!-- Confirm password -->
+        <div class="form-group">
+          <label class="form-label" for="regConfirm">Confirm Password</label>
+          <div class="input-wrap">
+            <input id="regConfirm"
+                   type="password"
+                   class="form-input"
+                   placeholder="Re-enter your password"
+                   autocomplete="new-password"
+                   required/>
+            <i class="bi bi-eye input-icon toggle-password" title="Show/hide password"></i>
+          </div>
+          <div id="regConfirmError" class="field-error"></div>
+        </div>
+
+        <!-- Terms -->
+        <div style="display:flex; align-items:flex-start; gap:0.6rem; margin-bottom:1.2rem;">
+          <input type="checkbox" id="regTerms" required style="accent-color:var(--brand-red); margin-top:3px; flex-shrink:0;"/>
+          <label for="regTerms" style="font-size:0.78rem; color:var(--text-muted); line-height:1.5; cursor:pointer;">
+            I agree to the <a href="{% url 'terms' %}" class="text-brand">Terms of Service</a> and <a href="{% url 'privacy_policy' %}" class="text-brand">Privacy Policy</a>
+          </label>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="btn-auth">Create Account</button>
+
+        <!-- OR divider -->
+        <div class="or-divider">or continue with</div>
+
+        <button type="button" class="btn-google">
+          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          Continue with Google
+        </button>
+
+        <div class="auth-footer">
+          Already have an account?
+          <button type="button" class="auth-link-btn" onclick="document.querySelector('[data-tab=login]').click();">Sign in</button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'main.js' %}"></script>
+</body>
+</html>

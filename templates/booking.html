@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title id="bookingPageTitle">Book Artist – Shristi</title>
+  <meta name="description" content="Book a custom artwork commission with your chosen artist on Shristi."/>
+
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="{% static 'style.css' %}"/>
+</head>
+<body>
+
+<!-- ============================================================
+     NAVBAR
+============================================================ -->
+<nav id="mainNav" class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'home' %}">Shri<span>sti</span></a>
+
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse" data-bs-target="#navMenu"
+            aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'artist' %}">Artists</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">How It Works</a></li>
+      </ul>
+      <div class="d-flex align-items-center gap-2">
+        <a href="{% url 'login' %}" class="btn-nav-outline">Sign Up</a>
+        <a href="{% url 'login' %}" class="btn-nav-solid">Sign In</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ============================================================
+     PAGE BANNER
+============================================================ -->
+<div class="page-banner">
+  <div class="container page-banner-inner">
+    <div class="breadcrumb-nav">
+      <a href="{% url 'home' %}">Home</a>
+      <span>›</span>
+      <a href="{% url 'artist' %}">Artists</a>
+      <span>›</span>
+      <span>Book</span>
+    </div>
+    <p class="section-eyebrow">✦ Commission Artwork</p>
+    <h1 class="section-title">Book Your Artist</h1>
+    <p class="section-subtitle">Fill in the details below and we'll confirm your booking within 24 hours.</p>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     MAIN BOOKING LAYOUT
+     Left: Artist summary card (populated by JS from URL param ?id=N)
+     Right: Booking form
+============================================================ -->
+<section class="section-pad">
+  <div class="container">
+    <div class="row g-4 align-items-start">
+
+      <!-- ---- LEFT: Artist Summary ---- -->
+      <div class="col-lg-4">
+        <div class="artist-summary reveal">
+          <!-- Image populated by JS -->
+          <img id="bookingArtistImg"
+               class="artist-summary-img"
+               src="https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=600&q=80"
+               alt="Artist"/>
+
+          <div class="artist-summary-body">
+            <h2 id="bookingArtistName" class="artist-name" style="font-size:1.3rem; margin-bottom:0.5rem;">Loading…</h2>
+
+            <div class="d-flex align-items-center gap-3 mb-1" style="font-size:0.82rem; color:var(--text-muted);">
+              <span><i class="bi bi-geo-alt-fill text-brand"></i> <span id="bookingArtistLocation">—</span></span>
+              <span><i class="bi bi-palette text-brand"></i> <span id="bookingArtistStyle">—</span></span>
+            </div>
+
+            <div style="font-size:0.82rem; color:var(--text-muted); margin-bottom:1rem;">
+              <i class="bi bi-star-fill" style="color:#f4c542;"></i>
+              <span id="bookingArtistRating">—</span> Rating
+            </div>
+
+            <p id="bookingArtistBio" style="font-size:0.85rem; color:var(--text-muted); line-height:1.7; margin-bottom:1.5rem;">Loading artist information…</p>
+            <a href="{% url 'artist' %}"
+   id="bookingPortfolioLink"
+   class="booking-portfolio-link">
+  <i class="bi bi-images" aria-hidden="true"></i>
+  View Artist Portfolio
+</a>
+
+          
+
+            <!-- Price summary box -->
+            <div class="price-box">
+              <div class="price-row">
+                <span>Base Price</span>
+                <span id="basePrice" data-base="0">—</span>
+              </div>
+              <div class="price-row">
+                <span>Platform Fee (5%)</span>
+                <span id="platformFee">—</span>
+              </div>
+              <div class="price-row total">
+                <span>Total</span>
+                <span id="totalPrice">—</span>
+              </div>
+            </div>
+
+            <a href="{% url 'artist' %}" style="font-size:0.78rem; color:var(--text-muted); display:inline-flex; align-items:center; gap:0.4rem; margin-top:1rem; transition: color 0.3s;"
+               onmouseover="this.style.color='var(--brand-red)'"
+               onmouseout="this.style.color='var(--text-muted)'">
+              <i class="bi bi-arrow-left"></i> Choose a different artist
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---- RIGHT: Booking Form ---- -->
+      <div class="col-lg-8 reveal delay-2">
+        <div class="booking-form-card">
+
+          <div class="booking-step-label">Step 1 of 1 – Commission Details</div>
+          <h3 style="font-size:1.3rem; margin-bottom:2rem;">Fill Your Booking Details</h3>
+
+          <!-- The form id is used by JS to attach submit handler -->
+          <form id="bookingForm" novalidate>
+
+            <!-- Your Name + Email -->
+            <div class="row g-3 mb-3">
+              <div class="col-sm-6">
+                <label class="filter-label">Your Full Name *</label>
+                <input type="text" class="filter-control" placeholder="e.g. Rahul Sharma" required/>
+              </div>
+              <div class="col-sm-6">
+                <label class="filter-label">Email Address *</label>
+                <input type="email" class="filter-control" placeholder="you@example.com" required/>
+              </div>
+            </div>
+
+            <!-- Phone -->
+            <div class="row g-3 mb-3">
+              <div class="col-sm-6">
+                <label class="filter-label">Phone Number *</label>
+                <input type="tel" class="filter-control" placeholder="+91 98765 43210" required/>
+              </div>
+              <div class="col-sm-6">
+                <!-- Service type changes price via JS -->
+                <label class="filter-label">Service Type *</label>
+                <select id="serviceType" class="filter-control">
+                  <option value="standard">Standard (1× price)</option>
+                  <option value="express">Express (1.5× price, faster delivery)</option>
+                  <option value="premium">Premium (2× price, extra revisions)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Preferred Date + Artwork Size -->
+            <div class="row g-3 mb-3">
+              <div class="col-sm-6">
+                <label class="filter-label">Preferred Start Date *</label>
+                <!-- Min date set to today by JS -->
+                <input id="bookingDate" type="date" class="filter-control" required/>
+              </div>
+              <div class="col-sm-6">
+                <label class="filter-label">Artwork Size</label>
+                <select class="filter-control">
+                  <option>A4 (21 × 29 cm)</option>
+                  <option>A3 (29 × 42 cm)</option>
+                  <option>A2 (42 × 59 cm)</option>
+                  <option>A1 (59 × 84 cm)</option>
+                  <option>Custom Size</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Delivery address -->
+            <div class="mb-3">
+              <label class="filter-label" for="deliveryAddress">Delivery Address <span style="color:var(--text-muted); font-weight:400;">(required for physical delivery)</span></label>
+              <textarea id="deliveryAddress"
+                        class="filter-control"
+                        rows="3"
+                        placeholder="Enter full delivery address if you need physical artwork delivery"
+                        style="resize:vertical; min-height:86px;"></textarea>
+            </div>
+
+            <!-- Project description -->
+            <div class="mb-3">
+              <label class="filter-label">Project Description *</label>
+              <textarea id="projectDescription"
+                        class="filter-control"
+                        rows="4"
+                        placeholder="Describe what you'd like the artist to create. Include references, colours, mood, or any specific requirements…"
+                        required
+                        style="resize:vertical; min-height:100px;"></textarea>
+            </div>
+
+            <!-- Reference image upload -->
+            <div class="mb-3">
+              <label class="filter-label">Reference Image (optional)</label>
+              <input type="file"
+                     id="referenceImage"
+                     accept="image/*"
+                     class="filter-control"
+                     style="padding: 0.5rem 0.9rem; cursor:pointer;"/>
+              <small style="font-size:0.72rem; color:var(--text-muted); display:block; margin-top:0.4rem;">JPG or PNG up to 10 MB.</small>
+            </div>
+
+            <!-- Delivery preference -->
+            <div class="mb-4">
+              <label class="filter-label">Delivery Preference</label>
+              <div class="d-flex gap-3 flex-wrap" style="margin-top:0.4rem;">
+                <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.85rem; cursor:pointer; color:var(--text-muted);">
+                  <input type="radio" name="delivery" value="digital" checked style="accent-color:var(--brand-red);"/>
+                  Digital File
+                </label>
+                <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.85rem; cursor:pointer; color:var(--text-muted);">
+                  <input type="radio" name="delivery" value="physical" style="accent-color:var(--brand-red);"/>
+                  Physical Delivery
+                </label>
+                <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.85rem; cursor:pointer; color:var(--text-muted);">
+                  <input type="radio" name="delivery" value="both" style="accent-color:var(--brand-red);"/>
+                  Both
+                </label>
+              </div>
+            </div>
+
+            <!-- Terms checkbox -->
+            <div class="mb-4" style="display:flex; align-items:flex-start; gap:0.6rem;">
+              <input type="checkbox" id="agreeTerms" required style="accent-color:var(--brand-red); margin-top:3px; flex-shrink:0;"/>
+              <label for="agreeTerms" style="font-size:0.82rem; color:var(--text-muted); line-height:1.5; cursor:pointer;">
+                I agree to Shristi's <a href="{% url 'terms' %}" class="text-brand">Terms of Service</a> and understand that payment is held in escrow until I approve the final artwork.
+              </label>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="btn-primary-red w-100" style="padding:0.9rem; justify-content:center; border-radius:6px; font-size:0.82rem;">
+              <i class="bi bi-send-check-fill"></i> Send Booking Request
+            </button>
+
+            <p style="font-size:0.72rem; color:var(--text-muted); text-align:center; margin-top:1rem;">
+              <i class="bi bi-shield-check" style="color:var(--brand-red);"></i>
+              Advance payment is requested only after the artist accepts your booking.
+            </p>
+
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer id="siteFooter">
+  <div class="container">
+    <div class="row g-5">
+
+      <div class="col-lg-5">
+        <div class="footer-brand">Shri<span>sti</span></div>
+        <p class="footer-desc">India's premier platform for discovering and booking talented artists for custom artwork.</p>
+        <div class="social-icons">
+          <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="social-icon"><i class="bi bi-twitter-x"></i></a>
+          <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-2">
+        <h6 class="footer-heading">Navigate</h6>
+        <ul class="footer-links">
+          <li><a href="{% url 'home' %}">Home</a></li>
+          <li><a href="{% url 'artist' %}">Artists</a></li>
+          <li><a href="{% url 'booking' %}">Book</a></li>
+          <li><a href="{% url 'login' %}">Login</a></li>
+        </ul>
+      </div>
+
+      <div class="col-6 col-lg-2">
+        <h6 class="footer-heading">Support</h6>
+        <ul class="footer-links">
+    
+          <li><a href="{% url 'contact' %}">Contact Us</a></li>
+          <li><a href="{% url 'privacy_policy' %}">Privacy Policy</a></li>
+          <li><a href="{% url 'terms' %}">Terms</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2025 Shristi. All rights reserved.</p>
+      <p><a href="{% url 'privacy_policy' %}">Privacy</a> &nbsp;·&nbsp; <a href="{% url 'terms' %}">Terms</a></p>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'main.js' %}"></script>
+</body>
+</html>

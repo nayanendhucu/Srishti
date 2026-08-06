@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shristi – Find Your Artist</title>
+  <meta name="description" content="India's premier platform for booking talented artists for custom artwork. Filter by location, style, and budget."/>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <!-- Shristi Stylesheet -->
+  <link rel="stylesheet" href="{% static 'style.css' %}"/>
+</head>
+<body>
+
+<!-- ============================================================
+     NAVBAR – sticky, shared across all pages
+     Active link is set by JS based on current filename
+============================================================ -->
+<nav id="mainNav" class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'home' %}">Shri<span>sti</span></a>
+
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse" data-bs-target="#navMenu"
+            aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'artist' %}">Artists</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'artist_dashboard' %}">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'gallery' %}">Gallery</a></li>
+      </ul>
+      <div class="d-flex align-items-center gap-2">
+        <a href="{% url 'login' %}" class="btn-nav-outline">Sign Up</a>
+        <a href="{% url 'login' %}" class="btn-nav-solid">Sign In</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ============================================================
+     HERO SECTION
+============================================================ -->
+<section id="hero">
+  <div class="container">
+    <div class="row align-items-center gy-5">
+
+      <!-- Left: text -->
+      <div class="col-lg-6">
+        <p class="hero-eyebrow">✦ India's Premier Art Booking Platform</p>
+
+        <h1 class="hero-title">
+          Find The Best<br/>
+          <span class="highlight">Artists</span> For Your<br/>
+          Custom Artwork
+        </h1>
+
+        <p class="hero-subtitle">
+          Discover talented artists across India. Filter by location, art style, and budget.
+          Commission one-of-a-kind masterpieces crafted just for you.
+        </p>
+
+        <div class="d-flex flex-wrap align-items-center gap-3">
+          <a href="{% url 'artist' %}" class="btn-primary-red">
+            <i class="bi bi-search"></i>Explore Artists
+          </a>
+          <a href="#howItWorks" class="btn-outline">
+            How It Works <i class="bi bi-arrow-down"></i>
+          </a>
+        </div>
+
+        <!-- Stats strip -->
+        <div class="hero-stats d-flex align-items-center gap-4 mt-5 flex-wrap">
+          <div class="stat-item">
+            <div class="stat-num">2<span>K+</span></div>
+            <div class="stat-label">Artists</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">15<span>K+</span></div>
+            <div class="stat-label">Artworks</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">8<span>K+</span></div>
+            <div class="stat-label">Bookings</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">98<span>%</span></div>
+            <div class="stat-label">Satisfaction</div>
+          </div>
+        </div>
+      </div>
+
+     
+    <!-- Right Side - Text & Description -->
+<!-- Right Side - Featured Image -->
+      <div class="col-lg-6 text-center">
+        <div class="art-arch mx-auto">
+          <img src="https://cdn.britannica.com/87/2087-050-8B2A01CD/Mona-Lisa-oil-wood-panel-Leonardo-da.jpg"
+               alt="Live Custom Portrait by Shristi Artist"
+               class="featured-image"
+               loading="lazy"
+               referrerpolicy="no-referrer"/>
+        </div>
+
+        <div class="mt-4">
+          <span class="art-badge">✦ Featured</span>
+          <h3 class="text-light mt-3 mb-2">Live Custom Portrait</h3>
+          <p class="text-light-50">by Shristi Artist</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+
+<!-- ============================================================
+     QUICK FILTER BAR
+     On submit, redirects to the Artists page with query params
+============================================================ -->
+<section id="quickFilter" style="background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 1.8rem 0;">
+  <div class="container">
+    <div class="row g-3 align-items-end">
+
+      <!-- Location -->
+      <div class="col-sm-6 col-lg-3">
+        <label class="filter-label"><i class="bi bi-geo-alt me-1"></i>Location</label>
+        <select id="homeLocation" class="filter-control">
+          <option value="all">All Cities</option>
+          <option value="mumbai">Mumbai</option>
+          <option value="delhi">Delhi</option>
+          <option value="bengaluru">Bengaluru</option>
+          <option value="chennai">Chennai</option>
+          <option value="kolkata">Kolkata</option>
+          <option value="jaipur">Jaipur</option>
+          <option value="ahmedabad">Ahmedabad</option>
+          <option value="pune">Pune</option>
+        </select>
+      </div>
+
+      <!-- Art Style -->
+      <div class="col-sm-6 col-lg-3">
+        <label class="filter-label"><i class="bi bi-palette me-1"></i>Art Style</label>
+        <select id="homeStyle" class="filter-control">
+          <option value="all">All Styles</option>
+          <option value="portrait">Portrait</option>
+          <option value="abstract">Abstract</option>
+          <option value="watercolour">Watercolour</option>
+          <option value="oil">Oil Painting</option>
+          <option value="sketch">Sketch / Pencil</option>
+          <option value="digital">Digital Art</option>
+          <option value="mandala">Mandala</option>
+          <option value="mural">Mural</option>
+        </select>
+      </div>
+
+      <!-- Budget -->
+      <div class="col-sm-6 col-lg-3">
+        <label class="filter-label"><i class="bi bi-currency-rupee me-1"></i>Budget</label>
+        <select id="homeBudget" class="filter-control">
+          <option value="all">Any Budget</option>
+          <option value="under1000">Under ₹1,000</option>
+          <option value="1000-5000">₹1,000 – ₹5,000</option>
+          <option value="5000-15000">₹5,000 – ₹15,000</option>
+          <option value="15000-50000">₹15,000 – ₹50,000</option>
+          <option value="above50000">₹50,000+</option>
+        </select>
+      </div>
+
+      <!-- Search button -->
+      <div class="col-sm-6 col-lg-3">
+        <label class="filter-label" style="opacity:0">Find</label>
+        <button id="homeSearchBtn" class="btn-primary-red w-100" style="padding: 0.6rem 1rem; justify-content: center; border-radius: 6px;">
+          <i class="bi bi-search"></i>Find Artists
+        </button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     HOW IT WORKS
+============================================================ -->
+<section id="howItWorks" class="section-pad">
+  <div class="container">
+
+    <div class="section-header text-center reveal">
+      <p class="section-eyebrow">✦ Simple & Fast</p>
+      <h2 class="section-title">How Shristi Works</h2>
+      <p class="section-subtitle mx-auto">From discovery to delivery, commissioning custom art is effortless.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-sm-6 col-lg-3 reveal delay-1">
+        <div class="step-card">
+          <span class="step-num">01</span>
+          <div class="step-icon"><i class="bi bi-search"></i></div>
+          <h5>Discover Artists</h5>
+          <p>Browse verified artists filtered by city, style, and budget to find your perfect match.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3 reveal delay-2">
+        <div class="step-card">
+          <span class="step-num">02</span>
+          <div class="step-icon"><i class="bi bi-chat-dots"></i></div>
+          <h5>Discuss & Quote</h5>
+          <p>Chat directly with the artist, share your vision, and receive a personalised quote.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3 reveal delay-3">
+        <div class="step-card">
+          <span class="step-num">03</span>
+          <div class="step-icon"><i class="bi bi-shield-check"></i></div>
+          <h5>Secure Booking</h5>
+          <p>Book safely with our escrow system. Funds release only when you approve the artwork.</p>
+        </div>
+      </div>
+      <div class="col-sm-6 col-lg-3 reveal delay-4">
+        <div class="step-card">
+          <span class="step-num">04</span>
+          <div class="step-icon"><i class="bi bi-box-seam"></i></div>
+          <h5>Receive Your Art</h5>
+          <p>Get your masterpiece delivered to your doorstep or digitally — ready to treasure.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ============================================================
+     FEATURED ARTISTS  (dynamically rendered by JS)
+============================================================ -->
+<section id="featuredArtists" style="padding: 5rem 0; background: var(--bg-card);">
+  <div class="container">
+
+    <div class="d-flex align-items-end justify-content-between mb-4 flex-wrap gap-3 reveal">
+      <div>
+        <p class="section-eyebrow">✦ Handpicked For You</p>
+        <h2 class="section-title">Featured Artists</h2>
+        <p class="section-subtitle">Top-rated creators ready to bring your vision to life.</p>
+      </div>
+      <a href="{% url 'artist' %}" class="btn-book" style="white-space:nowrap;">
+        View All <i class="bi bi-arrow-right ms-1"></i>
+      </a>
+    </div>
+
+    <!-- JS inserts artist cards here -->
+    <div id="featuredGrid" class="row g-4"></div>
+
+  </div>
+</section>
+
+
+<!-- ============================================================
+     ART CATEGORIES
+============================================================ -->
+<section class="section-pad">
+  <div class="container">
+
+    <div class="section-header reveal">
+      <p class="section-eyebrow">✦ Browse By Style</p>
+      <h2 class="section-title">Explore Art Categories</h2>
+      <p class="section-subtitle">Find artists who specialise in the style you love.</p>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-6 col-md-4 col-lg-2 reveal delay-1">
+        <a href="{% url 'artist' %}?style=portrait" class="cat-card d-block">
+          <img src="https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?w=400&q=80" alt="Portrait"/>
+          <div class="cat-overlay"><div class="cat-name">Portrait</div><div class="cat-count">320+ Artists</div></div>
+        </a>
+      </div>
+      <div class="col-6 col-md-4 col-lg-2 reveal delay-2">
+        <a href="{% url 'artist' %}?style=abstract" class="cat-card d-block">
+          <img src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&q=80" alt="Abstract"/>
+          <div class="cat-overlay"><div class="cat-name">Abstract</div><div class="cat-count">280+ Artists</div></div>
+        </a>
+      </div>
+      <div class="col-6 col-md-4 col-lg-2 reveal delay-3">
+        <a href="{% url 'artist' %}?style=watercolour" class="cat-card d-block">
+          <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=400&q=80" alt="Watercolour"/>
+          <div class="cat-overlay"><div class="cat-name">Watercolour</div><div class="cat-count">190+ Artists</div></div>
+        </a>
+      </div>
+      <div class="col-6 col-md-4 col-lg-2 reveal delay-4">
+        <a href="{% url 'artist' %}?style=mandala" class="cat-card d-block">
+          <img src="https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?w=400&q=80" alt="Mandala"/>
+          <div class="cat-overlay"><div class="cat-name">Mandala</div><div class="cat-count">150+ Artists</div></div>
+        </a>
+      </div>
+      <div class="col-6 col-md-4 col-lg-2 reveal delay-1">
+        <a href="{% url 'artist' %}?style=mural" class="cat-card d-block">
+          <img src="https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?w=400&q=80" alt="Mural"/>
+          <div class="cat-overlay"><div class="cat-name">Mural</div><div class="cat-count">80+ Artists</div></div>
+        </a>
+      </div>
+      <div class="col-6 col-md-4 col-lg-2 reveal delay-2">
+        <a href="{% url 'artist' %}?style=digital" class="cat-card d-block">
+          <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80" alt="Digital"/>
+          <div class="cat-overlay"><div class="cat-name">Digital</div><div class="cat-count">240+ Artists</div></div>
+        </a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ============================================================
+     TESTIMONIALS
+============================================================ -->
+<section class="section-pad" style="background: var(--bg-card);">
+  <div class="container">
+
+    <div class="section-header text-center reveal">
+      <p class="section-eyebrow">✦ Real Stories</p>
+      <h2 class="section-title">What Our Clients Say</h2>
+      <p class="section-subtitle mx-auto">Thousands of happy clients have found their perfect artist on Shristi.</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-4 reveal delay-1">
+        <div class="testi-card">
+          <div class="testi-stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+          <div class="testi-quote">"</div>
+          <p class="testi-text">I commissioned a portrait of my parents for their anniversary. Rohan captured every detail perfectly. Seamless from booking to delivery.</p>
+          <div class="testi-author">
+            <img class="testi-avatar" src="https://i.pravatar.cc/80?img=12" alt="Sneha"/>
+            <div><div class="testi-name">Sneha Kapoor</div><div class="testi-role">Mumbai · Portrait Commission</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 reveal delay-2">
+        <div class="testi-card">
+          <div class="testi-stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+          <div class="testi-quote">"</div>
+          <p class="testi-text">Found an incredible abstract artist for my office lobby. The filter system is brilliant — narrowed down by location and style in seconds.</p>
+          <div class="testi-author">
+            <img class="testi-avatar" src="https://i.pravatar.cc/80?img=33" alt="Arjun"/>
+            <div><div class="testi-name">Arjun Verma</div><div class="testi-role">Delhi · Office Mural</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 reveal delay-3">
+        <div class="testi-card">
+          <div class="testi-stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half-fill"></i></div>
+          <div class="testi-quote">"</div>
+          <p class="testi-text">As an artist, Shristi changed my career. Consistent commissions and the escrow payment gives me complete peace of mind every time.</p>
+          <div class="testi-author">
+            <img class="testi-avatar" src="https://i.pravatar.cc/80?img=47" alt="Meera"/>
+            <div><div class="testi-name">Meera Pillai</div><div class="testi-role">Bengaluru · Watercolour Artist</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ============================================================
+     CTA BANNER
+============================================================ -->
+<section id="ctaBanner">
+  <div class="container text-center position-relative">
+    <div class="reveal">
+      <p class="section-eyebrow">✦ Join Us Today</p>
+      <h2 class="section-title mb-2">Are You An Artist?<br/><span class="text-brand">Start Earning With Shristi</span></h2>
+      <p class="section-subtitle mx-auto mb-4">List your portfolio, set your prices, and connect with clients who value your craft.</p>
+      <div class="d-flex flex-wrap justify-content-center gap-3">
+        <a href="{% url 'login' %}" class="btn-primary-red"><i class="bi bi-palette"></i>Register As Artist</a>
+        <a href="{% url 'artist' %}" class="btn-outline">Find An Artist <i class="bi bi-arrow-right"></i></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer id="siteFooter">
+  <div class="container">
+    <div class="row g-5">
+
+      <div class="col-lg-4">
+        <div class="footer-brand">Shri<span>sti</span></div>
+        <p class="footer-desc">India's premier platform for discovering and booking talented artists for custom artwork.</p>
+        <div class="social-icons">
+          <a href="#" class="social-icon" title="Instagram"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="social-icon" title="Twitter"><i class="bi bi-twitter-x"></i></a>
+          <a href="#" class="social-icon" title="Facebook"><i class="bi bi-facebook"></i></a>
+          <a href="#" class="social-icon" title="LinkedIn"><i class="bi bi-linkedin"></i></a>
+          <a href="#" class="social-icon" title="Pinterest"><i class="bi bi-pinterest"></i></a>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-2">
+        <h6 class="footer-heading">Platform</h6>
+        <ul class="footer-links">
+          <li><a href="{% url 'artist' %}">Browse Artists</a></li>
+          <li><a href="{% url 'artist_dashboard' %}">Dashboard</a></li>
+          <li><a href="{% url 'gallery' %}">Art Gallery</a></li>
+          <li><a href="{% url 'booking' %}">Commissions</a></li>
+        </ul>
+      </div>
+
+      <div class="col-6 col-lg-2">
+        <h6 class="footer-heading">For Artists</h6>
+        <ul class="footer-links">
+          <li><a href="{% url 'login' %}">Register</a></li>
+          <li><a href="{% url 'artist_dashboard' %}">Dashboard</a></li>
+        </ul>
+      </div>
+
+      <div class="col-6 col-lg-2">
+        <h6 class="footer-heading">Support</h6>
+        <ul class="footer-links">
+          <li><a href="{% url 'contact' %}">Contact Us</a></li>
+          <li><a href="{% url 'privacy_policy' %}">Privacy Policy</a></li>
+          <li><a href="{% url 'terms' %}">Terms of Service</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2025 Shristi. All rights reserved. Made with ♥ in India.</p>
+      <p><a href="{% url 'privacy_policy' %}">Privacy</a> &nbsp;·&nbsp; <a href="{% url 'terms' %}">Terms</a></p>
+    </div>
+  </div>
+</footer>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'main.js' %}"></script>
+</body>
+</html>

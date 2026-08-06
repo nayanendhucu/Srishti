@@ -1,0 +1,9 @@
+venv/
+*.pyc
+__pycache__/
+db.sqlite3
+db.sqlite3.before-artist-cleanup.bak
+media/
+.env
+*.log
+.vscode/

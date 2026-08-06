@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Artist Dashboard – Shristi</title>
+  <meta name="description" content="Manage your portfolio, bookings, availability and profile on Shristi."/>
+
+  <!-- Fonts (matches entire site) -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <!-- Dashboard CSS -->
+  <link rel="stylesheet" href="{% static 'dashboard.css' %}"/>
+</head>
+<body>
+
+<!-- Mobile sidebar overlay -->
+<div id="sidebarOverlay"></div>
+
+<!-- ================================================================
+     SIDEBAR
+================================================================ -->
+<nav id="dashSidebar" aria-label="Dashboard navigation">
+
+  <!-- Brand -->
+  <div class="sb-brand">
+    <div class="sb-logo">Shri<span>sti</span></div>
+    <div class="sb-sub">Artist Portal</div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="sb-nav">
+    <span class="sb-label">Main</span>
+
+    <div class="sb-item active" data-page="pg-home">
+      <i class="bi bi-grid-1x2-fill" aria-hidden="true"></i>
+      Dashboard
+    </div>
+
+    <div class="sb-item" data-page="pg-portfolio">
+      <i class="bi bi-images" aria-hidden="true"></i>
+      Portfolio
+    </div>
+
+    <div class="sb-item" data-page="pg-profile">
+      <i class="bi bi-person-badge-fill" aria-hidden="true"></i>
+      Profile &amp; Styles
+    </div>
+
+    <span class="sb-label" style="margin-top:.4rem;">Work</span>
+
+    <div class="sb-item" data-page="pg-availability">
+      <i class="bi bi-calendar3" aria-hidden="true"></i>
+      Availability
+    </div>
+
+    <div class="sb-item" data-page="pg-bookings">
+      <i class="bi bi-clipboard2-check-fill" aria-hidden="true"></i>
+      Bookings
+      <span class="sb-badge" id="bookingsBadge">3</span>
+    </div>
+
+    <div class="sb-item" data-page="pg-messages">
+      <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>
+      Messages
+      <span class="sb-badge" id="messagesBadge">0</span>
+    </div>
+
+    <div class="sb-item" data-page="pg-pricing">
+      <i class="bi bi-tag-fill" aria-hidden="true"></i>
+      Pricing &amp; Services
+    </div>
+
+    <span class="sb-label" style="margin-top:.4rem;">Account</span>
+
+    <!-- Back to Home -->
+    <a class="sb-item sb-link" href="{% url 'home' %}">
+      <i class="bi bi-house-fill" aria-hidden="true"></i>
+      Back to Home
+    </a>
+
+    <div class="sb-divider"></div>
+
+    <!-- Logout -->
+    <div class="sb-item logout-item" id="logoutBtn">
+      <i class="bi bi-box-arrow-left" aria-hidden="true"></i>
+      Logout
+    </div>
+  </div>
+
+  <!-- Artist info footer -->
+  <div class="sb-artist">
+    <div class="sb-artist-avatar-wrap">
+      <img id="sbAvatar"
+           src="https://i.pravatar.cc/80?img=47"
+           alt="Your profile picture"
+           class="sb-artist-avatar"/>
+      <div class="sb-artist-online" title="Online"></div>
+    </div>
+    <div style="overflow:hidden;">
+      <div class="sb-artist-name" id="sbArtistName">Your Name</div>
+      <div class="sb-artist-role">Artist</div>
+    </div>
+  </div>
+
+</nav><!-- /sidebar -->
+
+
+<!-- ================================================================
+     MAIN CONTENT
+================================================================ -->
+<div id="dashMain">
+
+  <!-- TOP BAR -->
+  <header id="dashTopbar">
+    <div class="topbar-left">
+      <!-- Mobile hamburger -->
+      <button id="menuToggle" aria-label="Open navigation">
+        <i class="bi bi-list"></i>
+      </button>
+      <!-- Dynamic page title -->
+      <span id="pageTitle">Dashboard</span>
+    </div>
+
+    <div class="topbar-right">
+      <!-- Back to Home (topbar shortcut) -->
+      <a href="{% url 'home' %}" class="btn-home" aria-label="Back to Shristi home page">
+        <i class="bi bi-house" aria-hidden="true"></i>
+        <span class="d-none d-sm-inline">Home</span>
+      </a>
+
+      <!-- Notification bell -->
+      <button class="topbar-bell" aria-label="Notifications" title="Notifications">
+        <i class="bi bi-bell-fill" aria-hidden="true"></i>
+        <span class="bell-dot" aria-hidden="true"></span>
+      </button>
+
+      <!-- Profile chip → goes to edit profile -->
+      <div class="topbar-chip" onclick="showPage('pg-profile')" role="button" tabindex="0"
+           aria-label="Go to profile editor" title="Edit profile">
+        <img id="topbarAvatar" src="https://i.pravatar.cc/80?img=47" alt="Your avatar"/>
+        <span class="topbar-chip-name" id="topbarName">Your Name</span>
+        <i class="bi bi-chevron-down" style="font-size:.6rem;color:var(--muted);" aria-hidden="true"></i>
+      </div>
+
+      <!-- Logout button -->
+      <button class="btn-logout" onclick="logoutArtist()" aria-label="Logout" title="Logout">
+        <i class="bi bi-box-arrow-right"></i>
+      </button>
+    </div>
+  </header><!-- /topbar -->
+
+
+  <!-- PAGE CONTAINER -->
+  <main class="dash-inner">
+
+    <!-- ===========================================================
+         PAGE: DASHBOARD HOME
+    =========================================================== -->
+    <div id="pg-home" class="dash-page active">
+
+      <!-- Welcome banner -->
+      <div class="welcome-banner">
+        <h3> WELCOME  , <span id="welcomeName">Artist</span>! </h3>
+        <p>Here's your Shristi artist account at a glance.</p>
+      </div>
+
+      <!-- Stats -->
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-icon si-red"><i class="bi bi-currency-rupee" aria-hidden="true"></i></div>
+          <div class="stat-lbl">Earnings This Month</div>
+          <div class="stat-val" id="statEarnings">₹0</div>
+          <div class="stat-sub">From accepted orders</div>
+        </div>
+        <div class="stat-card sc-green">
+          <div class="stat-icon si-green"><i class="bi bi-check2-circle" aria-hidden="true"></i></div>
+          <div class="stat-lbl">Completed Works</div>
+          <div class="stat-val" id="statCompleted">0</div>
+          <div class="stat-sub">Accepted bookings</div>
+        </div>
+        <div class="stat-card sc-gold">
+          <div class="stat-icon si-gold"><i class="bi bi-inbox-fill" aria-hidden="true"></i></div>
+          <div class="stat-lbl">New Bookings</div>
+          <div class="stat-val" id="statBookings">3</div>
+          <div class="stat-sub">Awaiting response</div>
+        </div>
+        <div class="stat-card sc-blue">
+          <div class="stat-icon si-blue"><i class="bi bi-person-check-fill" aria-hidden="true"></i></div>
+          <div class="stat-lbl">Profile Complete</div>
+          <div class="stat-val" id="statProfile">0%</div>
+          <div class="prog-bar">
+            <div class="prog-fill" id="completionFill" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick actions -->
+      <div class="dash-card">
+        <div class="dash-card-title"><i class="bi bi-lightning-charge-fill"></i> Quick Actions</div>
+        <div class="d-flex flex-wrap gap-2">
+          <button class="btn-red"   onclick="showPage('pg-portfolio')">
+            <i class="bi bi-plus-circle"></i> Upload Artwork
+          </button>
+          <button class="btn-ghost" onclick="showPage('pg-availability')">
+            <i class="bi bi-calendar-plus"></i> Add Availability
+          </button>
+          <button class="btn-ghost" onclick="showPage('pg-bookings')">
+            <i class="bi bi-eye"></i> View Bookings
+          </button>
+          <button class="btn-ghost" onclick="showPage('pg-profile')">
+            <i class="bi bi-person-gear"></i> Edit Profile
+          </button>
+        </div>
+      </div>
+
+      <!-- Tips -->
+      <div class="dash-card" style="border-left:3px solid #f4c542;">
+        <div class="dash-card-title" style="color:#f4c542;">
+          <i class="bi bi-lightbulb-fill" style="color:#f4c542;"></i> Tips to Get More Bookings
+        </div>
+        <div class="row g-2" style="font-size:.82rem;color:var(--muted);">
+          <div class="col-sm-6"><i class="bi bi-check-circle-fill" style="color:#f4c542;margin-right:.4rem;"></i>Upload at least 6 portfolio images</div>
+          <div class="col-sm-6"><i class="bi bi-check-circle-fill" style="color:#f4c542;margin-right:.4rem;"></i>Add your Kerala Mural style tag</div>
+          <div class="col-sm-6"><i class="bi bi-check-circle-fill" style="color:#f4c542;margin-right:.4rem;"></i>Set availability for the next 30 days</div>
+          <div class="col-sm-6"><i class="bi bi-check-circle-fill" style="color:#f4c542;margin-right:.4rem;"></i>Write a detailed bio in your profile</div>
+        </div>
+      </div>
+
+    </div><!-- /pg-home -->
+
+
+    <!-- ===========================================================
+         PAGE: PORTFOLIO
+    =========================================================== -->
+    <div id="pg-portfolio" class="dash-page">
+
+      <div class="page-hdr">
+        <div class="red-bar"></div>
+        <h2>My Portfolio</h2>
+        <p>Showcase your best work. Clients browse your portfolio before booking.</p>
+      </div>
+
+      <!-- Upload card -->
+      <div class="dash-card">
+        <div class="dash-card-title"><i class="bi bi-cloud-upload-fill"></i> Upload Artworks</div>
+
+        <!-- Hidden file input (multiple, real) -->
+        <input type="file" id="portfolioInput" multiple accept="image/*" hidden aria-label="Choose portfolio images"/>
+
+        <!-- Drag & drop zone — clicking triggers file input above -->
+        <div class="drop-zone" id="portfolioDropZone" role="button" tabindex="0"
+             aria-label="Click or drag images here to upload">
+          <i class="bi bi-image-fill" aria-hidden="true"></i>
+          <p>Drag &amp; drop images here, or <span class="dz-cta">click to browse</span></p>
+          <small>JPG · PNG · WEBP · Up to 15 images · Max 5 MB each</small>
+        </div>
+
+        <!-- Count label -->
+        <p class="portfolio-count" id="portfolioCount">0 / 15 images</p>
+
+        <!-- REAL preview grid — populated by JS after upload -->
+        <div class="portfolio-grid" id="portfolioGrid" aria-label="Portfolio images"></div>
+
+      </div>
+    </div><!-- /pg-portfolio -->
+
+
+    <!-- ===========================================================
+         PAGE: PROFILE & STYLES
+    =========================================================== -->
+    <div id="pg-profile" class="dash-page">
+
+      <div class="page-hdr">
+        <div class="red-bar"></div>
+        <h2>Profile &amp; Art Styles</h2>
+        <p>Your public profile — what clients see when they find you.</p>
+      </div>
+
+      <!-- Profile photo -->
+      <div class="dash-card">
+        <div class="dash-card-title"><i class="bi bi-camera-fill"></i> Profile Photo</div>
+
+        <div class="profile-photo-section">
+          <!-- Clickable ring → triggers file input -->
+          <div class="avatar-ring" id="avatarRing" role="button" tabindex="0"
+               aria-label="Click to change profile photo">
+            <img id="avatarPreview"
+                 src="https://i.pravatar.cc/200?img=47"
+                 alt="Your current profile photo"/>
+            <div class="avatar-overlay" aria-hidden="true">
+              <i class="bi bi-camera-fill"></i>
+              <span>Change</span>
+            </div>
+          </div>
+
+          <!-- Hidden input — reads real file immediately -->
+          <input type="file" id="avatarInput" accept="image/*" hidden aria-label="Choose profile photo"/>
+
+          <div class="avatar-info">
+            <h6>Upload a professional photo</h6>
+            <p>Square image, at least 300×300 px. Max 4 MB. JPG or PNG.</p>
+            <button class="btn-ghost" id="changeAvatarBtn">
+              <i class="bi bi-upload"></i> Choose Photo
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Basic info form -->
+      <div class="dash-card">
+        <div class="dash-card-title"><i class="bi bi-person-fill"></i> Basic Information</div>
+        <div class="row g-3">
+
+          <div class="col-sm-6">
+            <label class="f-label" for="pName">Full Name</label>
+            <input id="pName" type="text" class="f-ctrl" placeholder="Your full name"/>
+          </div>
+
+          <div class="col-sm-6">
+            <label class="f-label" for="pPhone">Phone Number</label>
+            <input id="pPhone" type="tel" class="f-ctrl" placeholder="+91 98765 43210"/>
+          </div>
+
+          <!-- Kerala cities first -->
+          <div class="col-sm-6">
+            <label class="f-label" for="pLocation">City / Location</label>
+            <select id="pLocation" class="f-ctrl">
+              <optgroup label="🌴 Kerala">
+                <option value="kerala">Kochi (Cochin)</option>
+                <option value="kerala">Thiruvananthapuram</option>
+                <option value="kerala">Kozhikode (Calicut)</option>
+                <option value="kerala">Malappuram</option>
+              </optgroup>
+              <optgroup label="🇮🇳 Pan India">
+                <option value="bengaluru">Bengaluru</option>
+                <option value="mumbai">Mumbai</option>
+                <option value="delhi">Delhi</option>
+                <option value="chennai">Chennai</option>
+                <option value="jaipur">Jaipur</option>
+                <option value="kolkata">Kolkata</option>
+                <option value="ahmedabad">Ahmedabad</option>
+                <option value="pune">Pune</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <div class="col-sm-6">
+            <label class="f-label" for="pExp">Years of Experience</label>
+            <select id="pExp" class="f-ctrl">
+              <option value="">Select…</option>
+              <option value="1">Less than 1 year</option>
+              <option value="2">1–3 years</option>
+              <option value="5">3–5 years</option>
+              <option value="8">5–10 years</option>
+              <option value="10">10+ years</option>
+            </select>
+          </div>
+
+          <div class="col-12">
+            <label class="f-label" for="pBio">Bio / Artist Statement</label>
+            <textarea id="pBio" class="f-ctrl" rows="4"
+              placeholder="Tell clients about yourself, your inspiration, your journey as an artist…"></textarea>
+          </div>
+
+          <div class="col-12">
+            <label class="f-label" for="pMediums">Mediums You Work With</label>
+            <input id="pMediums" type="text" class="f-ctrl"
+                   placeholder="e.g. Acrylic, Watercolour, Ink, Digital, Charcoal…"/>
+            <small style="font-size:.7rem;color:var(--muted);">Comma-separated list</small>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Art style tags -->
+      <div class="dash-card">
+        <div class="dash-card-title"><i class="bi bi-tags-fill"></i> Art Styles</div>
+        <p style="font-size:.82rem;color:var(--muted);margin-bottom:.75rem;">
+          Add your speciality styles. Clients use these to filter and discover you.
+        </p>
+
+        <label class="f-label">Your Style Tags</label>
+        <div class="tags-wrap" id="tagsWrap" aria-label="Your art style tags"></div>
+
+        <div class="d-flex gap-2 mt-2">
+          <input id="tagInput" type="text" class="f-ctrl" placeholder="Type a style then press Add or Enter…" style="flex:1;"/>
+          <button class="btn-red" onclick="addTag()" style="padding:.6rem 1.2rem;">
+            <i class="bi bi-plus-lg"></i> Add
+          </button>
+        </div>
+
+        <label class="f-label" style="margin-top:.85rem;">Suggested Styles (click to add)</label>
+        <div class="tag-sugg-wrap" id="tagSuggWrap"></div>
+      </div>
+
+      <!-- Save button row -->
+      <div class="d-flex justify-content-end gap-2 mb-4">
+        <button class="btn-ghost" onclick="loadProfileForm()">
+          <i class="bi bi-arrow-counterclockwise"></i> Reset
+        </button>
+        <button class="btn-red" onclick="saveProfile()">
+          <i class="bi bi-floppy-fill"></i> Save Profile
+        </button>
+      </div>
+
+    </div><!-- /pg-profile -->
+
+
+    <!-- ===========================================================
+         PAGE: AVAILABILITY
+    =========================================================== -->
+    <div id="pg-availability" class="dash-page">
+
+      <div class="page-hdr">
+        <div class="red-bar"></div>
+        <h2>Availability</h2>
+        <p>Set dates and time slots when you can accept new commissions.</p>
+      </div>
+
+      <!-- Add slot -->
+      <div class="dash-card">
+        <div class="dash-card-title"><i class="bi bi-calendar-plus-fill"></i> Add Available Slot</div>
+        <div class="row g-3 align-items-end">
+          <div class="col-sm-4">
+            <label class="f-label" for="slotDate">Date</label>
+            <input id="slotDate" type="date" class="f-ctrl" aria-label="Select date"/>
+          </div>
+          <div class="col-sm-4">
+            <label class="f-label" for="slotTime">Time Slot</label>
+            <select id="slotTime" class="f-ctrl" aria-label="Select time slot">
+              <option value="9:00 AM – 12:00 PM">Morning (9 AM – 12 PM)</option>
+              <option value="12:00 PM – 3:00 PM">Afternoon (12 PM – 3 PM)</option>
+              <option value="3:00 PM – 6:00 PM">Evening (3 PM – 6 PM)</option>
+              <option value="Full Day">Full Day</option>
+            </select>
+          </div>
+          <div class="col-sm-4">
+            <button class="btn-red w-100" onclick="addSlot()" style="padding:.62rem;">
+              <i class="bi bi-plus-circle-fill"></i> Add Slot
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slots list -->
+      <div class="dash-card">
+        <div class="dash-card-title"><i class="bi bi-clock-history"></i> Your Available Slots</div>
+        <div id="slotList"></div>
+      </div>
+
+    </div><!-- /pg-availability -->
+
+
+    <!-- ===========================================================
+         PAGE: BOOKINGS
+    =========================================================== -->
+    <div id="pg-bookings" class="dash-page">
+
+      <div class="page-hdr">
+        <div class="red-bar"></div>
+        <h2>Booking Requests</h2>
+        <p>Review and respond to incoming artwork commission requests.</p>
+      </div>
+
+      <!-- Filter row -->
+      <div class="bk-filter-row" role="group" aria-label="Filter bookings">
+        <button class="btn-red bk-filter-btn" data-filter="all"      onclick="renderBookings('all')"      style="padding:.38rem 1rem;font-size:.75rem;">All</button>
+        <button class="btn-ghost bk-filter-btn" data-filter="pending"  onclick="renderBookings('pending')"  style="padding:.38rem 1rem;font-size:.75rem;">Pending</button>
+        <button class="btn-ghost bk-filter-btn" data-filter="accepted" onclick="renderBookings('accepted')" style="padding:.38rem 1rem;font-size:.75rem;">Accepted</button>
+      </div>
+
+      <div id="bookingList"></div>
+
+    </div><!-- /pg-bookings -->
+
+
+    <!-- ===========================================================
+         PAGE: MESSAGES
+    =========================================================== -->
+    <div id="pg-messages" class="dash-page">
+
+      <div class="page-hdr">
+        <div class="red-bar"></div>
+        <h2>Messages</h2>
+        <p>Reply to customers who contacted you from your public artist profile.</p>
+      </div>
+
+      <div class="dash-card">
+        <div class="dash-card-title"><i class="bi bi-chat-dots-fill"></i> Customer Conversations</div>
+        <div id="messageList" class="message-list"></div>
+      </div>
+
+    </div><!-- /pg-messages -->
+
+
+    <!-- ===========================================================
+         PAGE: PRICING
+    =========================================================== -->
+    <div id="pg-pricing" class="dash-page">
+
+      <div class="page-hdr">
+        <div class="red-bar"></div>
+        <h2>Pricing &amp; Services</h2>
+        <p>Set your prices. Clients see these on your public profile.</p>
+      </div>
+
+      
+
+      <!-- Size pricing -->
+      <div class="dash-card">
+        <div class="dash-card-title"><i class="bi bi-currency-rupee"></i> Size-Based Pricing</div>
+
+        <div class="price-row">
+          <span class="price-lbl">Small (A4 / 8×10 in)</span>
+          <div class="price-inp">
+            <input id="prSmall" type="number" class="f-ctrl" placeholder="e.g. 1500" min="0" aria-label="Price for small size"/>
+          </div>
+          <span style="font-size:.75rem;color:var(--muted);">₹ per piece</span>
+        </div>
+
+        <div class="price-row">
+          <span class="price-lbl">Medium (A3 / 12×16 in)</span>
+          <div class="price-inp">
+            <input id="prMedium" type="number" class="f-ctrl" placeholder="e.g. 3000" min="0" aria-label="Price for medium size"/>
+          </div>
+          <span style="font-size:.75rem;color:var(--muted);">₹ per piece</span>
+        </div>
+
+        <div class="price-row">
+          <span class="price-lbl">Large (A2 / 18×24 in)</span>
+          <div class="price-inp">
+            <input id="prLarge" type="number" class="f-ctrl" placeholder="e.g. 6000" min="0" aria-label="Price for large size"/>
+          </div>
+          <span style="font-size:.75rem;color:var(--muted);">₹ per piece</span>
+        </div>
+
+        <div class="price-row">
+          <span class="price-lbl">Custom / Mural (per sq.ft)</span>
+          <div class="price-inp">
+            <input id="prSqft" type="number" class="f-ctrl" placeholder="e.g. 800" min="0" aria-label="Price per square foot"/>
+          </div>
+          <span style="font-size:.75rem;color:var(--muted);">₹ / sq.ft</span>
+        </div>
+      </div>
+
+      <!-- Add-ons -->
+      <div class="dash-card">
+        <div class="dash-card-title"><i class="bi bi-box-seam-fill"></i> Add-on Services</div>
+        <div class="row g-3">
+          <div class="col-sm-6">
+            <label class="f-label" for="prFrame">Framing (add-on)</label>
+            <input id="prFrame" type="number" class="f-ctrl" placeholder="e.g. 500" min="0"/>
+          </div>
+          <div class="col-sm-6">
+            <label class="f-label" for="prGift">Gift Wrapping (add-on)</label>
+            <input id="prGift" type="number" class="f-ctrl" placeholder="e.g. 200" min="0"/>
+          </div>
+          <div class="col-sm-6">
+            <label class="f-label" for="prExpress">Express Delivery Surcharge</label>
+            <input id="prExpress" type="number" class="f-ctrl" placeholder="e.g. 1000" min="0"/>
+          </div>
+          <div class="col-sm-6">
+            <label class="f-label" for="prDigital">Digital File Price</label>
+            <input id="prDigital" type="number" class="f-ctrl" placeholder="e.g. 500" min="0"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Turnaround -->
+      <div class="dash-card">
+        <div class="dash-card-title"><i class="bi bi-clock-fill"></i> Turnaround Time</div>
+        <div class="row g-3">
+          <div class="col-sm-6">
+            <label class="f-label" for="prTurnaround">Standard Turnaround</label>
+            <select id="prTurnaround" class="f-ctrl">
+              <option value="">Select…</option>
+              <option>3–5 days</option>
+              <option>1 week</option>
+              <option>2 weeks</option>
+              <option>3–4 weeks</option>
+              <option>1–2 months</option>
+            </select>
+          </div>
+          <div class="col-sm-6">
+            <label class="f-label" for="prRush">Rush Order Turnaround</label>
+            <select id="prRush" class="f-ctrl">
+              <option value="">Select…</option>
+              <option>24–48 hours</option>
+              <option>3 days</option>
+              <option>5 days</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2 mb-4">
+        <button class="btn-ghost" onclick="loadPricingForm()">
+          <i class="bi bi-arrow-counterclockwise"></i> Reset
+        </button>
+        <button class="btn-red" onclick="savePricing()">
+          <i class="bi bi-floppy-fill"></i> Save Pricing
+        </button>
+      </div>
+
+    </div><!-- /pg-pricing -->
+
+  </main><!-- /dash-inner -->
+</div><!-- /dashMain -->
+
+
+<!-- Toast notification -->
+<div id="dashToast" role="alert" aria-live="polite">
+  <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+  <span id="toastMsg">Saved!</span>
+</div>
+
+<!-- Booking Request Modal (shows incoming customer bookings) -->
+<div id="bookingModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="bookingModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content" style="background: var(--dash-panel); border: 1px solid rgba(255,255,255,0.1);">
+      <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+        <h5 class="modal-title" id="bookingModalLabel">
+          <i class="bi bi-inbox-fill" style="color: var(--brand-red); margin-right: 0.5rem;"></i>
+          New Booking Request
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+      </div>
+
+      
+      <div class="modal-body">
+        <div id="bookingModalContent">
+          <p style="color: var(--dash-muted);">Loading request details...</p>
+        </div>
+      </div>
+      <div class="modal-footer" style="border-top: 1px solid rgba(255,255,255,0.1); gap: 0.5rem;">
+        <button type="button" class="btn-ghost" data-bs-dismiss="modal">
+          <i class="bi bi-x-circle"></i> Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap 5 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'main.js' %}"></script>
+<!-- Dashboard JS (all logic, no fakes) -->
+<script src="{% static 'dashboard.js' %}"></script>
+</body>
+</html>

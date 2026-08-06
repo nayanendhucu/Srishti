@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat with Artist | Shristi</title>
+  <meta name="description" content="Chat directly with your chosen artist on Shristi to discuss your custom artwork commission."/>
+
+  <!-- Google Fonts (matches project) -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <!-- Bootstrap 5.3 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <!-- Shristi shared styles -->
+  <link rel="stylesheet" href="{% static 'style.css' %}"/>
+</head>
+<body class="chat-page-body">
+
+<!-- ============================================================
+     NAVBAR
+============================================================ -->
+<nav id="mainNav" class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'home' %}">Shri<span>sti</span></a>
+
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse" data-bs-target="#navMenu"
+            aria-controls="navMenu" aria-expanded="false"
+            aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'artist' %}">Artists</a></li>
+        <li class="nav-item"><a class="nav-link" href="#howItWorks">How It Works</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'gallery' %}">Gallery</a></li>
+      </ul>
+      <div class="d-flex align-items-center gap-2">
+        <a href="{% url 'login' %}" class="btn-nav-outline">Sign Up</a>
+        <a href="{% url 'login' %}" class="btn-nav-solid">Sign In</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ============================================================
+     CHAT LAYOUT WRAPPER
+     Full-height flex column below navbar
+============================================================ -->
+<div class="chat-wrapper">
+
+  <!-- =====================================================
+       CHAT WINDOW
+  ===================================================== -->
+  <div class="container chat-container">
+    <div class="chat-card">
+
+      <!-- CHAT HEADER: artist info + actions -->
+      <header class="chat-header" role="banner" aria-label="Chat header">
+
+        <!-- Back link to artist profile -->
+        <a href="{% url 'artist' %}"
+           class="chat-back-btn"
+           aria-label="Back to artist profile"
+           title="Back to profile">
+          <i class="bi bi-arrow-left" aria-hidden="true"></i>
+        </a>
+
+        <!-- Artist avatar + info -->
+        <div class="chat-artist-info">
+          <div class="chat-avatar-wrap">
+            <img
+              src="https://i.pravatar.cc/400?img=47"
+              alt="Artist profile photo"
+              class="chat-artist-avatar"
+              id="chatArtistAvatar"
+            />
+            <!-- Online indicator -->
+            <span class="chat-online-dot" aria-label="Online" title="Online"></span>
+          </div>
+          <div class="chat-artist-text">
+            <h1 class="chat-artist-name" id="chatArtistName">Conversation</h1>
+            <p class="chat-artist-status" id="chatArtistStatus">
+              <span class="chat-status-dot" aria-hidden="true"></span>
+              Online
+            </p>
+          </div>
+        </div>
+
+        <!-- Header action buttons -->
+        <div class="chat-header-actions">
+          <!-- Book button shortcut -->
+          <a href="{% url 'booking' %}"
+             id="chatBookingLink"
+             class="chat-action-btn"
+             aria-label="Book commission with this artist"
+             title="Book Commission">
+            <i class="bi bi-calendar-check" aria-hidden="true"></i>
+            <span class="chat-action-label">Book</span>
+          </a>
+          <!-- View profile -->
+          <a href="{% url 'artist' %}"
+             id="chatProfileLink"
+             class="chat-action-btn"
+             aria-label="View artist full profile"
+             title="View Profile">
+            <i class="bi bi-person-circle" aria-hidden="true"></i>
+            <span class="chat-action-label">Profile</span>
+          </a>
+        </div>
+
+      </header><!-- /chat-header -->
+
+      <section class="chat-payment-panel" id="chatPaymentPanel" hidden aria-live="polite"></section>
+
+      <!-- CHAT MESSAGES AREA (scrollable) -->
+      <main class="chat-messages" id="chatMessages" role="log" aria-live="polite" aria-label="Chat messages">
+
+        <!-- Date divider -->
+        <div class="chat-date-divider" role="separator">
+          <span>Today</span>
+        </div>
+
+        <!-- Welcome message from artist is injected by JS on load -->
+
+      </main><!-- /chat-messages -->
+
+
+      <!-- TYPING INDICATOR (hidden by default, shown during simulated reply) -->
+      <div class="chat-typing" id="chatTyping" aria-live="polite" aria-label="Artist is typing" hidden>
+        <img
+          src="https://i.pravatar.cc/400?img=47"
+          alt=""
+          class="chat-bubble-avatar"
+          id="chatTypingAvatar"
+          aria-hidden="true"
+        />
+        <div class="chat-typing-dots" aria-label="Artist is typing">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+
+
+      <!-- CHAT INPUT AREA -->
+      <footer class="chat-input-area" role="form" aria-label="Send a message">
+
+        <!-- Attachment button -->
+        <button type="button"
+                class="chat-attach-btn"
+                aria-label="Attach a file or image"
+                title="Attach file"
+                onclick="triggerFileAttach()">
+          <i class="bi bi-paperclip" aria-hidden="true"></i>
+        </button>
+        <!-- Hidden file input for attachments -->
+        <input type="file" id="chatFileInput" accept="image/*,.pdf,.doc,.docx,.txt" hidden aria-hidden="true"/>
+
+        <!-- Message text input -->
+        <input
+          type="text"
+          id="chatInput"
+          class="chat-input"
+          placeholder="Type your message…"
+          maxlength="1000"
+          autocomplete="off"
+          aria-label="Message text"
+        />
+
+        <!-- Send button -->
+        <button type="button" class="chat-send-btn" id="chatSendBtn" aria-label="Send message" title="Send" onclick="sendChatMessage()">
+          <i class="bi bi-send-fill" aria-hidden="true"></i>
+        </button>
+
+      </footer><!-- /chat-input-area -->
+
+    </div><!-- /chat-card -->
+  </div><!-- /container -->
+
+</div><!-- /chat-wrapper -->
+
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer id="siteFooter">
+  <div class="container">
+    <div class="row g-5">
+
+      <div class="col-lg-4">
+        <div class="footer-brand">Shri<span>sti</span></div>
+        <p class="footer-desc">India's premier platform for discovering and booking talented artists for custom artwork.</p>
+        <div class="social-icons">
+          <a href="#" class="social-icon" title="Instagram" aria-label="Instagram"><i class="bi bi-instagram" aria-hidden="true"></i></a>
+          <a href="#" class="social-icon" title="Twitter"   aria-label="Twitter X"><i class="bi bi-twitter-x" aria-hidden="true"></i></a>
+          <a href="#" class="social-icon" title="Facebook"  aria-label="Facebook"><i class="bi bi-facebook" aria-hidden="true"></i></a>
+          <a href="#" class="social-icon" title="LinkedIn"  aria-label="LinkedIn"><i class="bi bi-linkedin" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-2">
+        <h6 class="footer-heading">Platform</h6>
+        <ul class="footer-links">
+          <li><a href="{% url 'artist' %}">Browse Artists</a></li>
+          <li><a href="#howItWorks">How It Works</a></li>
+          <li><a href="{% url 'booking' %}">Commissions</a></li>
+        </ul>
+      </div>
+
+      <div class="col-6 col-lg-2">
+        <h6 class="footer-heading">Support</h6>
+        <ul class="footer-links">
+      
+          <li><a href="{% url 'contact' %}">Contact Us</a></li>
+          <li><a href="{% url 'privacy_policy' %}">Privacy Policy</a></li>
+          <li><a href="{% url 'terms' %}">Terms</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2025 Shristi. All rights reserved. Made with ♥ in India.</p>
+      <p><a href="{% url 'privacy_policy' %}">Privacy</a> &nbsp;·&nbsp; <a href="{% url 'terms' %}">Terms</a></p>
+    </div>
+  </div>
+</footer>
+
+
+<!-- Bootstrap 5 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Shared Shristi JS -->
+<script src="{% static 'main.js' %}"></script>
+</body>
+</html>

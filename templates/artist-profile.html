@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Artist Profile | Shristi</title>
+  <meta name="description" content="View an artist profile, portfolio, art styles, and booking details on Shristi."/>
+
+  <!-- Google Fonts (matches project) -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <!-- Bootstrap 5.3 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet"/>
+  <!-- Shristi shared styles -->
+  <link rel="stylesheet" href="{% static 'style.css' %}"/>
+  <!-- Page-specific styles (added to style.css – see instructions at bottom) -->
+</head>
+<body>
+
+<!-- ============================================================
+     NAVBAR – identical structure across all pages
+     JS (main.js initNavbar) sets the .active link automatically
+============================================================ -->
+<nav id="mainNav" class="navbar navbar-expand-lg">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'home' %}">Shri<span>sti</span></a>
+
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse" data-bs-target="#navMenu"
+            aria-controls="navMenu" aria-expanded="false"
+            aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'artist' %}">Artists</a></li>
+        <li class="nav-item"><a class="nav-link" href="#howItWorks">How It Works</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'gallery' %}">Gallery</a></li>
+      </ul>
+      <div class="d-flex align-items-center gap-2">
+        <a href="{% url 'login' %}" class="btn-nav-outline">Sign Up</a>
+        <a href="{% url 'login' %}" class="btn-nav-solid">Sign In</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ============================================================
+     PROFILE HERO BANNER
+     Full-width artwork-texture background strip
+============================================================ -->
+<section class="profile-hero" aria-label="Artist profile header">
+  <!-- Decorative grid overlay (matches hero section on index.html) -->
+  <div class="profile-hero-grid" aria-hidden="true"></div>
+
+  <div class="container position-relative">
+    <div class="profile-hero-inner">
+
+      <!-- Breadcrumb -->
+      <nav aria-label="Breadcrumb" class="profile-breadcrumb">
+        <a href="{% url 'home' %}">Home</a>
+        <span aria-hidden="true">›</span>
+        <a href="{% url 'artist' %}">Artists</a>
+        <span aria-hidden="true">›</span>
+        <span>Artist Profile</span>
+      </nav>
+
+      <!-- Avatar + name block -->
+      <div class="profile-identity">
+
+        <!-- Large circular avatar -->
+        <div class="profile-avatar-ring">
+          <img
+            src="https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=400&q=80"
+            alt="Artist profile photo"
+            class="profile-avatar-img"
+            id="profileHeroAvatar"
+          />
+          <!-- Verified badge -->
+          <span class="profile-verified-badge" title="Verified Artist">
+            <i class="bi bi-patch-check-fill" aria-label="Verified"></i>
+          </span>
+        </div>
+
+        <!-- Name / meta column -->
+        <div class="profile-meta">
+          <h1 class="profile-name">Loading Artist...</h1>
+
+          <!-- Location + city -->
+          <p class="profile-location">
+            <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
+            Loading location...
+          </p>
+
+          <!-- Star rating row -->
+          <div class="profile-rating" role="img" aria-label="Rating: 5.0 out of 5">
+            <span class="profile-stars">
+              <i class="bi bi-star-fill" aria-hidden="true"></i>
+              <i class="bi bi-star-fill" aria-hidden="true"></i>
+              <i class="bi bi-star-fill" aria-hidden="true"></i>
+              <i class="bi bi-star-fill" aria-hidden="true"></i>
+              <i class="bi bi-star-fill" aria-hidden="true"></i>
+            </span>
+            <span class="profile-rating-num">0.0</span>
+            <span class="profile-rating-count">(0 bookings)</span>
+          </div>
+
+          <!-- Quick stats strip -->
+          <div class="profile-quick-stats">
+            <div class="pqs-item">
+              <span class="pqs-value">0</span>
+              <span class="pqs-label">Portfolio Works</span>
+            </div>
+            <div class="pqs-divider" aria-hidden="true"></div>
+            <div class="pqs-item">
+              <span class="pqs-value">New</span>
+              <span class="pqs-label">Artist Status</span>
+            </div>
+            <div class="pqs-divider" aria-hidden="true"></div>
+            <div class="pqs-item">
+              <span class="pqs-value">Open</span>
+              <span class="pqs-label">Commissions</span>
+            </div>
+          </div>
+        </div>
+      </div><!-- /profile-identity -->
+
+    </div>
+  </div>
+</section><!-- /profile-hero -->
+
+
+<!-- ============================================================
+     MAIN CONTENT: two-column layout on desktop
+     Left (col-lg-8): bio, portfolio, reviews
+     Right (col-lg-4): sticky action card
+============================================================ -->
+<main class="container profile-main" id="profileMain">
+  <div class="row g-4 g-lg-5">
+
+    <!-- =====================================================
+         LEFT COLUMN
+    ===================================================== -->
+    <div class="col-lg-8">
+
+      <!-- About the Artist -->
+      <section class="profile-section reveal" aria-labelledby="about-heading">
+        <div class="profile-section-header">
+          <span class="section-eyebrow">✦ About the Artist</span>
+          <h2 class="profile-section-title" id="about-heading">Meet the Artist</h2>
+        </div>
+
+        <p class="profile-bio">
+          Loading artist bio...
+        </p>
+        <p class="profile-bio">
+          Portfolio and speciality details will appear here when the profile is loaded.
+        </p>
+        <p class="profile-bio">
+          Commission details are loaded from the artist's saved profile.
+        </p>
+
+        <!-- Mediums -->
+        <div class="profile-mediums">
+          <span class="profile-medium-label">Mediums:</span>
+          <span class="profile-medium-value">Loading...</span>
+        </div>
+      </section>
+
+
+      <!-- Art Specialties (tag badges) -->
+      <section class="profile-section reveal delay-1" aria-labelledby="styles-heading">
+        <div class="profile-section-header">
+          <span class="section-eyebrow">✦ Specialities</span>
+          <h2 class="profile-section-title" id="styles-heading">Art Styles & Expertise</h2>
+        </div>
+
+        <div class="profile-tags" role="list" aria-label="Art styles">
+          <!-- Each tag links to the filtered artists page -->
+          <a href="{% url 'artist' %}?style=mural"       class="profile-tag" role="listitem">Kerala Mural</a>
+          <a href="{% url 'artist' %}?style=mural"       class="profile-tag profile-tag--highlight" role="listitem">Theyyam Art</a>
+          <a href="{% url 'artist' %}?style=watercolour" class="profile-tag" role="listitem">Watercolour</a>
+          <a href="{% url 'artist' %}?style=portrait"    class="profile-tag" role="listitem">Portrait</a>
+          <a href="{% url 'artist' %}?style=mandala"     class="profile-tag" role="listitem">Kolam / Rangoli</a>
+          <a href="{% url 'artist' %}?style=mural"       class="profile-tag" role="listitem">Temple Mural</a>
+          <a href="{% url 'artist' %}?style=abstract"    class="profile-tag" role="listitem">Folk Art</a>
+          <a href="{% url 'artist' %}?style=sketch"      class="profile-tag" role="listitem">Ink Drawing</a>
+        </div>
+      </section>
+
+
+      <!-- Portfolio Grid -->
+      <section class="profile-section reveal delay-2" aria-labelledby="portfolio-heading">
+        <div class="profile-section-header">
+          <span class="section-eyebrow">✦ Selected Works</span>
+          <h2 class="profile-section-title" id="portfolio-heading">Portfolio</h2>
+        </div>
+
+        <!-- 6-image masonry-style grid: 3 cols on desktop, 2 on tablet, 1 on mobile -->
+        <div class="portfolio-grid" role="list" aria-label="Artist portfolio gallery">
+
+          <figure class="portfolio-item reveal delay-1" role="listitem">
+            <img
+              src="https://images.unsplash.com/photo-1578926078693-4bde8c1d0eb8?w=600&q=80"
+              alt="Abstract Kerala Mural painting in red and gold tones"
+              class="portfolio-img"
+              loading="lazy"
+            />
+            <figcaption class="portfolio-caption">
+              <span class="portfolio-title">Devi Mahatmyam</span>
+              <span class="portfolio-style">Kerala Mural · Natural pigments</span>
+            </figcaption>
+          </figure>
+
+          <figure class="portfolio-item reveal delay-2" role="listitem">
+            <img
+              src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=600&q=80"
+              alt="Vibrant abstract artwork with flowing red and pink tones"
+              class="portfolio-img"
+              loading="lazy"
+            />
+            <figcaption class="portfolio-caption">
+              <span class="portfolio-title">Monsoon Reverie</span>
+              <span class="portfolio-style">Abstract · Acrylic on canvas</span>
+            </figcaption>
+          </figure>
+
+          <figure class="portfolio-item reveal delay-3" role="listitem">
+            <img
+              src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=600&q=80"
+              alt="Soft watercolour landscape depicting Kerala backwaters"
+              class="portfolio-img"
+              loading="lazy"
+            />
+            <figcaption class="portfolio-caption">
+              <span class="portfolio-title">Backwater Dusk</span>
+              <span class="portfolio-style">Watercolour · Paper</span>
+            </figcaption>
+          </figure>
+
+          <figure class="portfolio-item reveal delay-1" role="listitem">
+            <img
+              src="https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?w=600&q=80"
+              alt="Detailed portrait painting of a woman in traditional Kerala attire"
+              class="portfolio-img"
+              loading="lazy"
+            />
+            <figcaption class="portfolio-caption">
+              <span class="portfolio-title">Mohiniyattam Grace</span>
+              <span class="portfolio-style">Portrait · Natural pigments</span>
+            </figcaption>
+          </figure>
+
+          <figure class="portfolio-item reveal delay-2" role="listitem">
+            <img
+              src="https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?w=600&q=80"
+              alt="Intricate mandala artwork in warm amber and red hues"
+              class="portfolio-img"
+              loading="lazy"
+            />
+            <figcaption class="portfolio-caption">
+              <span class="portfolio-title">Ashtadala Padmam</span>
+              <span class="portfolio-style">Mandala · Ink & gold leaf</span>
+            </figcaption>
+          </figure>
+
+          <figure class="portfolio-item reveal delay-3" role="listitem">
+            <img
+              src="https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?w=600&q=80"
+              alt="Large scale mural on a wall depicting Indian folk art figures"
+              class="portfolio-img"
+              loading="lazy"
+            />
+            <figcaption class="portfolio-caption">
+              <span class="portfolio-title">Temple Stories</span>
+              <span class="portfolio-style">Wall Mural · Acrylic</span>
+            </figcaption>
+          </figure>
+
+        </div><!-- /portfolio-grid -->
+      </section>
+
+
+      <!-- Reviews Section -->
+      <section class="profile-section reveal" aria-labelledby="reviews-heading">
+        <div class="profile-section-header">
+          <span class="section-eyebrow">✦ Client Feedback</span>
+          <h2 class="profile-section-title" id="reviews-heading">Reviews</h2>
+        </div>
+
+        <div class="reviews-list">
+
+          <article class="review-card reveal delay-1" aria-label="Review by Anjali Krishnan">
+            <div class="review-header">
+              <img src="https://i.pravatar.cc/60?img=12"
+                   alt="Profile photo of Anjali Krishnan"
+                   class="review-avatar"/>
+              <div class="review-author-info">
+                <span class="review-author">Anjali Krishnan</span>
+                <span class="review-location">Client location</span>
+              </div>
+              <div class="review-stars ms-auto" aria-label="5 stars">
+                <i class="bi bi-star-fill" aria-hidden="true"></i>
+                <i class="bi bi-star-fill" aria-hidden="true"></i>
+                <i class="bi bi-star-fill" aria-hidden="true"></i>
+                <i class="bi bi-star-fill" aria-hidden="true"></i>
+                <i class="bi bi-star-fill" aria-hidden="true"></i>
+              </div>
+            </div>
+            <p class="review-text">
+              Reviews from completed bookings will appear here.
+            </p>
+            <time class="review-date" datetime="2025-06-15">June 2025</time>
+          </article>
+
+          <article class="review-card reveal delay-2" aria-label="Review by Rahul Sharma">
+            <div class="review-header">
+              <img src="https://i.pravatar.cc/60?img=33"
+                   alt="Profile photo of Rahul Sharma"
+                   class="review-avatar"/>
+              <div class="review-author-info">
+                <span class="review-author">Rahul Sharma</span>
+                <span class="review-location">Bengaluru</span>
+              </div>
+              <div class="review-stars ms-auto" aria-label="5 stars">
+                <i class="bi bi-star-fill" aria-hidden="true"></i>
+                <i class="bi bi-star-fill" aria-hidden="true"></i>
+                <i class="bi bi-star-fill" aria-hidden="true"></i>
+                <i class="bi bi-star-fill" aria-hidden="true"></i>
+                <i class="bi bi-star-fill" aria-hidden="true"></i>
+              </div>
+            </div>
+            <p class="review-text">
+              Commissioned a portrait for my parents' anniversary. Communication was excellent,
+              delivery was on time, and the artwork exceeded every expectation. Will definitely
+              commission again.
+            </p>
+            <time class="review-date" datetime="2025-07-02">July 2025</time>
+          </article>
+
+        </div><!-- /reviews-list -->
+      </section>
+
+    </div><!-- /col-lg-8 left column -->
+
+
+    <!-- =====================================================
+         RIGHT COLUMN – Sticky action card
+    ===================================================== -->
+    <div class="col-lg-4">
+      <div class="profile-action-card" id="profileActionCard">
+
+        <!-- Pricing preview -->
+        <div class="pac-pricing">
+          <span class="pac-from">Starting from</span>
+          <span class="pac-price">₹0</span>
+          <span class="pac-unit">per artwork</span>
+        </div>
+
+        <hr class="pac-divider"/>
+
+        <!-- Availability indicator -->
+        <div class="pac-availability">
+          <span class="pac-avail-dot" aria-hidden="true"></span>
+          <span>Available for new commissions</span>
+        </div>
+
+        <!-- Typical reply time -->
+        <div class="pac-reply">
+          <i class="bi bi-clock" aria-hidden="true"></i>
+          Typically replies within <strong>2 hours</strong>
+        </div>
+
+        <!-- PRIMARY: Chat CTA -->
+        <a href="{% url 'chat' %}"
+           class="pac-btn-chat"
+           aria-label="Open chat with artist">
+          <i class="bi bi-chat-dots-fill" aria-hidden="true"></i>
+          Chat with Artist
+        </a>
+
+        <a href="#portfolio-heading"
+           class="pac-btn-portfolio"
+           aria-label="View artist portfolio">
+          <i class="bi bi-images" aria-hidden="true"></i>
+          View Portfolio
+        </a>
+
+        <!-- SECONDARY: Book directly -->
+        <a href="{% url 'booking' %}"
+           class="pac-btn-book"
+           aria-label="Book artist for a commission">
+          <i class="bi bi-calendar-check" aria-hidden="true"></i>
+          Book Commission
+        </a>
+        <hr class="pac-divider"/>
+
+        <!-- What's included checklist -->
+        <ul class="pac-includes" aria-label="What's included">
+          <li><i class="bi bi-check-circle-fill" aria-hidden="true"></i> Free initial consultation</li>
+          <li><i class="bi bi-check-circle-fill" aria-hidden="true"></i> 2 revision rounds</li>
+          <li><i class="bi bi-check-circle-fill" aria-hidden="true"></i> Escrow payment protection</li>
+          <li><i class="bi bi-check-circle-fill" aria-hidden="true"></i> Pan-India delivery</li>
+          <li><i class="bi bi-check-circle-fill" aria-hidden="true"></i> Digital preview before dispatch</li>
+        </ul>
+
+      </div><!-- /profile-action-card -->
+    </div><!-- /col-lg-4 -->
+
+  </div><!-- /row -->
+</main><!-- /profile-main -->
+
+
+<!-- ============================================================
+     FOOTER – identical across all pages
+============================================================ -->
+<footer id="siteFooter">
+  <div class="container">
+    <div class="row g-5">
+
+      <div class="col-lg-4">
+        <div class="footer-brand">Shri<span>sti</span></div>
+        <p class="footer-desc">India's premier platform for discovering and booking talented artists for custom artwork.</p>
+        <div class="social-icons">
+          <a href="#" class="social-icon" title="Instagram" aria-label="Instagram"><i class="bi bi-instagram" aria-hidden="true"></i></a>
+          <a href="#" class="social-icon" title="Twitter"   aria-label="Twitter X"><i class="bi bi-twitter-x" aria-hidden="true"></i></a>
+          <a href="#" class="social-icon" title="Facebook"  aria-label="Facebook"><i class="bi bi-facebook" aria-hidden="true"></i></a>
+          <a href="#" class="social-icon" title="LinkedIn"  aria-label="LinkedIn"><i class="bi bi-linkedin" aria-hidden="true"></i></a>
+          <a href="#" class="social-icon" title="Pinterest" aria-label="Pinterest"><i class="bi bi-pinterest" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-2">
+        <h6 class="footer-heading">Platform</h6>
+        <ul class="footer-links">
+          <li><a href="{% url 'artist' %}">Browse Artists</a></li>
+          <li><a href="#howItWorks">How It Works</a></li>
+          <li><a href="{% url 'gallery' %}">Art Gallery</a></li>
+          <li><a href="{% url 'booking' %}">Commissions</a></li>
+        </ul>
+      </div>
+
+      <div class="col-6 col-lg-2">
+        <h6 class="footer-heading">For Artists</h6>
+        <ul class="footer-links">
+          <li><a href="{% url 'login' %}">Register</a></li>
+          <li><a href="{% url 'artist_dashboard' %}">Dashboard</a></li>
+          <li><a href="{% url 'artist_dashboard' %}">Portfolio Tips</a></li>
+          <li><a href="{% url 'home' %}">Success Stories</a></li>
+        </ul>
+      </div>
+
+      <div class="col-6 col-lg-2">
+        <h6 class="footer-heading">Support</h6>
+        <ul class="footer-links">
+  
+          <li><a href="{% url 'contact' %}">Contact Us</a></li>
+          <li><a href="{% url 'privacy_policy' %}">Privacy Policy</a></li>
+          <li><a href="{% url 'terms' %}">Terms of Service</a></li>
+        </ul>
+      </div>
+
+      <div class="col-6 col-lg-2">
+        <h6 class="footer-heading">Art Styles</h6>
+        <ul class="footer-links">
+          <li><a href="{% url 'artist' %}?style=portrait">Portrait</a></li>
+          <li><a href="{% url 'artist' %}?style=abstract">Abstract</a></li>
+          <li><a href="{% url 'artist' %}?style=watercolour">Watercolour</a></li>
+          <li><a href="{% url 'artist' %}?style=mandala">Mandala</a></li>
+          <li><a href="{% url 'artist' %}?style=mural">Kerala Mural</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2025 Shristi. All rights reserved. Made with ♥ in India.</p>
+      <p><a href="{% url 'privacy_policy' %}">Privacy</a> &nbsp;·&nbsp; <a href="{% url 'terms' %}">Terms</a></p>
+    </div>
+  </div>
+</footer>
+
+
+<!-- Bootstrap 5 JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Shared Shristi JS (initNavbar, initScrollReveal, etc.) -->
+<script src="{% static 'main.js' %}"></script>
+<!-- Page-specific JS (see instructions at bottom of file) -->
+</body>
+</html>
