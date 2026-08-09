@@ -328,11 +328,8 @@ After starting the development server, users can access the application from `ht
 ## 👩‍💻 Author
 
 **Project Name:** Srishti - Artist Booking and Portfolio Platform  
-**Developed By:** Your Name  
-**Course/Department:** Your Course or Department Name  
-**College/University:** Your College or University Name  
-**Submitted To:** Faculty/Professor Name  
-**Academic Year:** 2025-2026
+**Developed By:** Nihal K 
+
 
 ## 📌 Project Status
 
