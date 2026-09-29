@@ -1,4 +1,4 @@
-#  Srishti - Artist Booking and Portfolio Platform
+<img width="1920" height="1020" alt="home" src="https://github.com/user-attachments/assets/211871bd-89ba-47ae-af02-fe8de605a122" />#  Srishti - Artist Booking and Portfolio Platform
 
 Srishti is a Django-based web application designed to connect clients with artists for custom artwork requests. The platform allows users to browse artist profiles, view portfolios, send booking requests, upload reference images, manage payments through screenshot verification, and communicate with artists through an integrated messaging system.
 
@@ -183,39 +183,27 @@ Add project screenshots in this section before submission.
 
 ### Home Page
 
-```text
-Insert screenshot of the home page here.
-```
 
-### Artist Listing Page
+<img width="1920" height="1020" alt="home" src="https://github.com/user-attachments/assets/f5e46b3f-8d32-4500-aaf4-ff68454b8e3c" />
 
-```text
-Insert screenshot of artist browsing and filtering here.
-```
+
 
 ### Artist Dashboard
 
-```text
-Insert screenshot of the artist dashboard here.
-```
+<img width="1920" height="1020" alt="dashboard" src="https://github.com/user-attachments/assets/23c89add-cbb1-4705-a50e-88ddbf7dfe62" />
 
-### Booking Page
 
-```text
-Insert screenshot of the booking form here.
-```
+
+### Booking Request Page
+
+<img width="1920" height="1020" alt="booking request" src="https://github.com/user-attachments/assets/06f0fd95-9eda-438f-a06f-ab80c8ced6c2" />
+
 
 ### Chat Page
 
-```text
-Insert screenshot of the messaging interface here.
-```
+<img width="1920" height="1020" alt="messaging" src="https://github.com/user-attachments/assets/ee40c26c-05c2-485c-8bf8-70639b8ee541" />
 
-### Admin Panel
 
-```text
-Insert screenshot of the Django admin panel here.
-```
 
 ## 🗄️ Database Design
 
